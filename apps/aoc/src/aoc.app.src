@@ -1,0 +1,16 @@
+{application, aoc,
+ [{description, "An OTP application"},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {mod, { aoc_app, []}},
+  {applications,
+   [kernel,
+    stdlib,
+    sasl
+   ]},
+  {env,[]},
+  {modules, []},
+  {maintainers, []},
+  {licenses, []},
+  {links, []}
+ ]}.

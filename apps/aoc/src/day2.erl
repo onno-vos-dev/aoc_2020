@@ -55,16 +55,18 @@ part_2_fun() ->
 -include_lib("stdlib/include/assert.hrl").
 
 day1a_example_test() ->
-  ?assertEqual([true, false, true],
-               solve(["1-3 a: abcde", "1-3 b: cdefg", "2-9 c: ccccccccc"],
-                     part_1_fun(),
-                     [])).
+  ?assertEqual(2,
+               length(lists:filter(fun(X) -> X end,
+                                   solve(["1-3 a: abcde", "1-3 b: cdefg", "2-9 c: ccccccccc"],
+                                         part_1_fun(),
+                                         [])))).
 
 day1b_example_test() ->
-  ?assertEqual([true, false, false],
-               solve(["1-3 a: abcde", "1-3 b: cdefg", "2-9 c: ccccccccc"],
-                     part_2_fun(),
-                     [])).
+  ?assertEqual(1,
+               length(lists:filter(fun(X) -> X end,
+                                   solve(["1-3 a: abcde", "1-3 b: cdefg", "2-9 c: ccccccccc"],
+                                         part_2_fun(),
+                                         [])))).
 
 -endif.
 

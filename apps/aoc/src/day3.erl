@@ -58,15 +58,15 @@ tree_fun() ->
 
 day1a_example_test() ->
   Input = util:read_file("day3_example.txt", <<"\n">>, fun erlang:binary_to_list/1),
-  ?assertEqual(7, solve(tl(Input), {{4, 3, 1}, []})).
+  ?assertEqual(7, solve(tl(Input), {{4, 3, 1}, 0})).
 
 day1b_example_test() ->
   Input = util:read_file("day3_example.txt", <<"\n">>, fun erlang:binary_to_list/1),
-  One = solve(tl(Input), {{2, 1, 1}, []}),
-  Two = solve(tl(Input), {{4, 3, 1}, []}),
-  Three = solve(tl(Input), {{6, 5, 1}, []}),
-  Four = solve(tl(Input), {{8, 7, 1}, []}),
-  Five = solve(tl(Input), {{2, 1, 2}, []}),
+  One = solve(tl(Input), {{2, 1, 1}, 0}),
+  Two = solve(tl(Input), {{4, 3, 1}, 0}),
+  Three = solve(tl(Input), {{6, 5, 1}, 0}),
+  Four = solve(tl(Input), {{8, 7, 1}, 0}),
+  Five = solve(tl(Input), {{2, 1, 2}, 0}),
   ?assertEqual(336, One * Two * Three * Four * Five).
 
 -endif.

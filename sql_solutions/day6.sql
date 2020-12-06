@@ -6,7 +6,7 @@ INSERT INTO input SELECT generate_series(1, array_length(ARRAY['necytxmlfhsu,uec
 DROP TABLE IF EXISTS input_per_question;
 CREATE TEMP TABLE input_per_question (row_num int, strings text, question text[]);
 INSERT INTO input_per_question 
-	SELECT 	row_num, strings, regexp_split_to_array(unnest(regexp_split_to_array(strings, E',')), E'') as question
+	SELECT 	row_num, strings, regexp_split_to_array(strings, E',') as question
 	FROM 	input
 	GROUP BY row_num, strings
 	;
@@ -24,27 +24,26 @@ CREATE TEMP TABLE intersections_per_group (row_num int, strings text, intersecti
 INSERT INTO intersections_per_group 
 	WITH RECURSIVE create_set(row_num, strings, question, intersection, pos) AS (
 		SELECT	t.row_num, t.strings, t.question, 
-			array_length(t.question, 1)::bigint as intersection,
+			array_length(regexp_split_to_array(t.question[1], E''), 1)::bigint as intersection,
 			1 as pos
 		FROM	input_per_question t
 		UNION ALL
 			SELECT	t.row_num, t.strings, t.question,
 				(SELECT count(*) 
-				 FROM ( SELECT unnest(fr.question)
+				 FROM ( SELECT unnest(regexp_split_to_array(cs.question[pos], E''))
 					INTERSECT
-					SELECT unnest(t.question)
+					SELECT unnest(regexp_split_to_array(cs.question[pos + 1], E''))
 					) as a
 				) as intersection,
 				pos + 1
 			FROM	input_per_question t
-			INNER JOIN create_set fr ON t.row_num = fr.row_num
-			WHERE	t.row_num = fr.row_num
-			AND 	pos < (SELECT max from max_recursions)
+			INNER JOIN create_set cs ON t.row_num = cs.row_num
+			WHERE	t.row_num = cs.row_num
+			AND 	pos < (SELECT array_length(t.question, 1))
 	)
 
-	SELECT 	row_num, strings, min(intersection) 
+	SELECT 	row_num, strings, min(intersection)
 	FROM 	create_set 
-	WHERE 	pos = array_length(regexp_split_to_array(strings, E','), 1)
 	GROUP BY row_num, strings
 	ORDER BY row_num
 	;

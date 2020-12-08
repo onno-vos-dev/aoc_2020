@@ -9,41 +9,25 @@
 
 %%%_* Exported =================================================================
 
-% 221, 223, 224 -> too low
 -spec part_1() -> integer().
 part_1() ->
-  solve([input()], instruction_fun(), action(return), start_acc()).
+  intcode:run([input()],
+              instruction_fun(),
+              action(return),
+              condition(),
+              intcode:start_acc()).
 
 -spec part_2() -> integer().
 part_2() ->
-  solve(swap_instructions(input()), instruction_fun(), action(loop), start_acc()).
+  intcode:run(swap_instructions(input()),
+              instruction_fun(),
+              action(loop),
+              condition(),
+              intcode:start_acc()).
 
 %%%_* Internal =================================================================
 input() ->
-  parse(util:read_file("day8.txt", <<"\n">>, fun(B) -> binary:split(B, <<" ">>, [trim]) end)).
-
-solve(Maps, Fun, Action, {{Pos, Acc}, Seen}) ->
-  case maps:get(Pos, hd(Maps), exit) of
-    exit -> Acc;
-    Value ->
-      case lists:member({Pos, Value}, Seen) of
-        true ->
-          case Action(Acc) of
-            loop -> solve(tl(Maps), Fun, Action, start_acc());
-            Acc -> Acc
-          end;
-        false ->
-          solve(Maps, Fun, Action, {Fun(Value, {Pos, Acc}), [{Pos, Value} | Seen]})
-      end
-  end.
-
-parse(Input) ->
-  {_, Map} =
-    lists:foldl(
-      fun([Op, <<Arith:1/binary, Num/binary>>], {I, Acc}) ->
-          {I + 1, maps:put(I, {Op, binary_to_atom(Arith, utf8), binary_to_integer(Num)}, Acc)}
-      end, {1, #{}}, Input),
-  Map.
+  intcode:parse(intcode:read_input("day8.txt")).
 
 instruction_fun() ->
   fun({<<"nop">>, _Instr, _}, {Pos, Acc}) -> {Pos + 1, Acc};
@@ -68,7 +52,10 @@ swap(<<"jmp">>) -> <<"nop">>.
 action(loop) -> fun(_) -> loop end;
 action(return) -> fun(Acc) -> Acc end.
 
-start_acc() -> {{1, 0}, []}.
+condition() ->
+  fun(Pos, Value, Seen) ->
+      lists:member({Pos, Value}, Seen)
+  end.
 
 %%%_* EUnit ====================================================================
 -ifdef(EUNIT).

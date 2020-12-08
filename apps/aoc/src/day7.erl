@@ -42,6 +42,7 @@ split_right(SplitRest) ->
 find_bags(_Map, [], Acc) -> Acc;
 find_bags(Map, [Key | T], Acc) ->
   Filtered = maps:filter(fun(_K, V) -> lists:keyfind(Key, 2, V) =/= false end, Map),
+  io:format("Filtered: ~p~n~n", [Filtered]),
   find_bags(Map, maps:keys(Filtered) ++ T, sets:union(sets:from_list(maps:keys(Filtered)), Acc)).
 
 required_bags(Map, Key) ->

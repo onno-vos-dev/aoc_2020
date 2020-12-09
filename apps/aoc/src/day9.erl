@@ -16,7 +16,9 @@ part_1() ->
 
 -spec part_2() -> integer().
 part_2() ->
-  find_range(input(), 2, part_1()).
+  Input = input(),
+  IndexedMap = maps:from_list(lists:zip(lists:seq(1,length(Input)), Input)),
+  find_range(IndexedMap, part_1(), {{1, 2}, maps:get(1, IndexedMap)}).
 
 %%%_* Internal =================================================================
 input() ->
@@ -31,20 +33,17 @@ solve_part1([H | T], L) ->
 is_weakness(Int, L) ->
   [ true || X <- L, Y <- L, X + Y =:= Int ] =/= [].
 
-find_range(L, N, Answer) ->
-  case find_range_n(L, N, Answer) of
-    false -> find_range(L, N + 1, Answer);
-    {true, Result} -> lists:min(Result) + lists:max(Result)
-  end.
-
-find_range_n(L, N, _) when length(L) < N -> false;
-find_range_n(L, N, Answer) ->
-  {L1, _} = lists:split(N, L),
-  case lists:sum(L1) of
-    Answer -> {true, L1};
-    Sum when Sum > Answer -> false;
-    _ -> find_range_n(tl(L), N, Answer)
-  end.
+find_range(Map, Answer, {{LIdx, HIdx}, Acc}) when Acc =:= Answer ->
+  lists:sum(
+    maps:fold(fun(K, V, [Min, Max]) when K >= LIdx andalso K =< HIdx - 1 ->
+                  [lists:min([Min, V]), lists:max([Max, V])];
+                 (_, _, A) ->
+                  A
+              end, [infinity, 0], Map));
+find_range(Map, Answer, {{LIdx, HIdx}, Acc}) when Acc > Answer ->
+  find_range(Map, Answer, {{LIdx + 1, HIdx}, Acc - maps:get(LIdx, Map)});
+find_range(Map, Answer, {{LIdx, HIdx}, Acc}) ->
+  find_range(Map, Answer, {{LIdx, HIdx + 1}, maps:get(HIdx, Map) + Acc}).
 
 %%%_* EUnit ====================================================================
 -ifdef(EUNIT).

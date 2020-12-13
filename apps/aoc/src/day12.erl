@@ -7,11 +7,12 @@
         ]).
 
 %%%_* API ======================================================================
-
+-spec part_1() -> integer().
 part_1() ->
   {{X, Y}, _} = solve(input(), part_1_fun(), {{0, 0}, east}),
   abs(X) + abs(Y).
 
+-spec part_2() -> integer().
 part_2() ->
   {_, {ShipX, ShipY}} = solve(input(), part_2_fun(), {{10, -1}, {0, 0}}),
   abs(ShipX) + abs(ShipY).

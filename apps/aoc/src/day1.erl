@@ -8,11 +8,11 @@
 
 %%%_* Exported =================================================================
 
--spec part_1() -> ok.
+-spec part_1() -> integer().
 part_1() ->
   solve(input(), part_1_fun(), []).
 
--spec part_2() -> ok.
+-spec part_2() -> integer().
 part_2() ->
   solve(input(), part_2_fun(), []).
 

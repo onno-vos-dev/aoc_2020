@@ -8,7 +8,7 @@
         ]).
 
 %%%_* API ======================================================================
-
+-spec golf(string()) -> {integer(), integer()}.
 golf(File) ->
   {ok, Bin} = file:read_file(File),
   Input = lists:sort([ binary_to_integer(S) || S <- binary:split(Bin, <<"\n">>, [trim, global]) ]),
